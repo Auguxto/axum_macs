@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{collections::HashMap, sync::Arc};
 
 use axum::{Extension, Router};
 use functions::data::mac::MacVendor;
@@ -8,7 +8,7 @@ mod functions;
 mod http;
 
 pub struct AppState {
-    pub mac_vendors: Vec<MacVendor>,
+    pub mac_vendors: HashMap<String, MacVendor>,
 }
 
 #[tokio::main]
