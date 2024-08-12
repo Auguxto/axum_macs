@@ -1,10 +1,11 @@
 static MAC_DATABASE: &str = include_str!("../../data/mac.csv");
 
+use std::collections::HashMap;
+
 use csv::Reader;
 use serde::{Deserialize, Serialize};
 
 // Mac Prefix,Vendor Name,Private,Block Type,Last Update
-
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct MacVendor {
     #[serde(rename(serialize = "prefix", deserialize = "Mac Prefix"))]
@@ -19,13 +20,15 @@ pub struct MacVendor {
     pub last_update: String,
 }
 
-pub fn read_mac_database() -> Vec<MacVendor> {
-    let mut vendors: Vec<MacVendor> = Vec::new();
+pub fn read_mac_database() -> HashMap<String, MacVendor> {
+    let mut vendors: HashMap<String, MacVendor> = HashMap::new();
     let mut reader = Reader::from_reader(MAC_DATABASE.as_bytes());
 
     for record in reader.deserialize::<MacVendor>() {
         match record {
-            Ok(record) => vendors.push(record),
+            Ok(record) => {
+                vendors.insert(record.prefix.clone().replace(':', ""), record);
+            }
             Err(e) => eprintln!("Error deserializing record: {}", e),
         }
     }
